@@ -1,0 +1,53 @@
+<script>
+function autoAddressComplete(){
+  var address = document.getElementById('auto_address_input_id');
+  var options = { types: ['establishment'] };
+  var autoAddressPlace = new google.maps.places.Autocomplete(address,options);
+  google.maps.event.addListener(autoAddressPlace, 'place_changed', function() {
+    var autoAddress = autoAddressPlace.getPlace();
+    for (var i = 0; i < autoAddress.address_components.length; i++) {
+      for (var j = 0; j < autoAddress.address_components[i].types.length; j++) {
+        if (autoAddress.address_components[i].types[j] == "street_number") {
+          document.getElementById('street_address_input_id').value = autoAddress.address_components[i].short_name + " ";
+        }
+        if (autoAddress.address_components[i].types[j] == "route") {
+          document.getElementById('street_address_input_id').value += autoAddress.address_components[i].long_name;
+        }
+        if (autoAddress.address_components[i].types[j] == "postal_code") {
+          document.getElementById('zip/postal_input_id').value = autoAddress.address_components[i].long_name;
+        }
+        if (autoAddress.address_components[i].types[j] == "locality") {
+          document.getElementById('city_input_id').value = autoAddress.address_components[i].long_name;
+        }zip/postal_input_id
+        if (autoAddress.address_components[i].types[j] == "administrative_area_level_1") {
+          document.getElementById('province/state_input_id').value = autoAddress.address_components[i].short_name;
+        }
+      }
+    }
+    var lat = autoAddress.geometry.location.lat();
+    var lng = autoAddress.geometry.location.lng();
+    jQuery(document).ready(function(){
+      jQuery.ajax({
+        url: "https://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+","+lng+"&key=YOUR_API_KEY",
+        type: "GET",
+        success: function(data) {
+          //console.log(data);
+          if(data["status"] != "OK"){
+            document.getElementById('zip/postal_input_id').value = '<strong>The postal code is not found.</strong>';
+          }
+          else{
+            jQuery.each(data["results"][0]["address_components"],
+              function(key, value){
+              if(value["types"][0] == "postal_code")
+                document.getElementById('zip/postal_input_id').value = value["long_name"];
+              }
+            )
+          }
+        }
+      });
+    });
+  })
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=autoAddressComplete">
+</script>
