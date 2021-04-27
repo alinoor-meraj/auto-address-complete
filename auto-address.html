@@ -1,7 +1,7 @@
 <script>
 function autoAddressComplete(){
   var address = document.getElementById('auto_address_input_id');
-  var options = { types: ['establishment'] };
+  var options = { componentRestrictions: { country: ["ca", "us"] }, types: ['establishment'] };
   var autoAddressPlace = new google.maps.places.Autocomplete(address,options);
   google.maps.event.addListener(autoAddressPlace, 'place_changed', function() {
     var autoAddress = autoAddressPlace.getPlace();
