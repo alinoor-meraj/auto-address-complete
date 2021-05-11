@@ -18,7 +18,7 @@ function autoAddressComplete(){
         }
         if (autoAddress.address_components[i].types[j] == "locality") {
           document.getElementById('city_input_id').value = autoAddress.address_components[i].long_name;
-        }zip/postal_input_id
+        }
         if (autoAddress.address_components[i].types[j] == "administrative_area_level_1") {
           document.getElementById('province/state_input_id').value = autoAddress.address_components[i].short_name;
         }
